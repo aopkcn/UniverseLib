@@ -28,7 +28,7 @@ namespace UniverseLib
         }
 
         public const string NAME = "UniverseLib";
-        public const string VERSION = "2.0.0";
+        public const string VERSION = "2.0.1";
         public const string AUTHOR = "rainbowblood666";
         public const string GUID = "rainbowblood.universelib";
 
@@ -97,6 +97,7 @@ namespace UniverseLib
                 UniversalBehaviour.Setup();
                 ReflectionUtility.Init();
                 RuntimeHelper.Init();
+                ECSInitialize.Init();
 
                 // Begin the startup delay coroutine
                 RuntimeHelper.Instance.Internal_StartCoroutine(SetupCoroutine());

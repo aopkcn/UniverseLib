@@ -15,6 +15,9 @@
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
         <Configurations>Release_Mono;Release_IL2CPP</Configurations>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageOutputPath>../Release/NuGet</PackageOutputPath>
+        <VersionPrefix>2.0.1</VersionPrefix>
     </PropertyGroup>
     <!-- Configurations -->
     <PropertyGroup Condition=" '$(Configuration)' == 'Release_IL2CPP' ">
@@ -23,18 +26,26 @@
         <DefineConstants>IL2CPP</DefineConstants>
         <AssemblyName>UniverseLib.IL2CPP</AssemblyName>
         <DocumentationFile>..\Release\UniverseLib.Il2Cpp\UniverseLib.IL2CPP.xml</DocumentationFile>
+        <PackageId>kremnev8.UniverseLib.IL2CPP.Interop</PackageId>
+        <Authors>sinai-dev</Authors>
+        <Description>Contains common implementations for creating UI-driven plugins which target IL2CPP and Mono. </Description>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release_Mono' ">
-        <TargetFramework>net35</TargetFramework>
+        <TargetFramework>netstandard2.1</TargetFramework>
         <OutputPath>..\Release\UniverseLib.Mono\</OutputPath>
         <DefineConstants>MONO</DefineConstants>
         <AssemblyName>UniverseLib.Mono</AssemblyName>
         <DocumentationFile>..\Release\UniverseLib.Mono\UniverseLib.Mono.xml</DocumentationFile>
+        <PackageId>kremnev8.UniverseLib.Mono</PackageId>
+        <Authors>sinai-dev</Authors>
+        <Description>Contains common implementations for creating UI-driven plugins which target IL2CPP and Mono. </Description>
     </PropertyGroup>
     <!-- NuGet -->
     <ItemGroup>
         <PackageReference Include="HarmonyX" Version="2.10.1" IncludeAssets="compile" />
         <PackageReference Include="UniverseLib.Analyzers" Version="1.0.4" IncludeAssets="compile" />
+        <PackageReference Include="Fody" Version="6.6.4" PrivateAssets="all" />
+        <PackageReference Include="InlineIL.Fody" Version="1.7.4" PrivateAssets="all" />  
     </ItemGroup>
     <ItemGroup Condition="'$(Configuration)' == 'Release_IL2CPP'">
         <PackageReference Include="Il2CppInterop.Common" Version="1.4.5" />
@@ -43,11 +54,43 @@
     <!-- Assembly References -->
     <ItemGroup Condition="'$(Configuration)' == 'Release_Mono'">
         <Reference Include="UnityEngine">
-            <HintPath>..\lib\mono\UnityEngine_publicized.dll</HintPath>
+            <HintPath>..\lib\mono\UnityEngine.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule">
+            <HintPath>..\lib\mono\UnityEngine.CoreModule_publicized.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.AssetBundleModule">
+            <HintPath>..\lib\mono\UnityEngine.AssetBundleModule_publicized.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.IMGUIModule">
+            <HintPath>..\lib\mono\UnityEngine.IMGUIModule_publicized.dll</HintPath> 
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.PhysicsModule">
+            <HintPath>..\lib\mono\UnityEngine.PhysicsModule_publicized.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule">
+            <HintPath>..\lib\mono\UnityEngine.TextRenderingModule_publicized.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule">
+            <HintPath>..\lib\mono\UnityEngine.UIModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine.UI">
             <HintPath>..\lib\mono\UnityEngine.UI_publicized.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Unity.Entities">
+            <HintPath>..\lib\mono\Unity.Entities_publicized.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Unity.Collections">
+            <HintPath>..\lib\mono\Unity.Collections_publicized.dll</HintPath>
             <Private>False</Private>
         </Reference>
     </ItemGroup>
@@ -89,9 +132,20 @@
             <HintPath>..\lib\interop\UnityEngine.IMGUIModule.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="Unity.Entities">
+            <HintPath>..\lib\interop\Unity.Entities.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Unity.Collections">
+            <HintPath>..\lib\interop\Unity.Collections.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Resources\*" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Patch" />
     </ItemGroup>
     <Target Name="CopyNuget" AfterTargets="build">
         <Message Text="Copying IL2CPP Interop files..." Importance="high" Condition="'$(Configuration)' == 'Release_IL2CPP'" />
