@@ -17,7 +17,7 @@
         <Configurations>Release_Mono;Release_IL2CPP;Release_IL2CPP_Mini</Configurations>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageOutputPath>../Release/NuGet</PackageOutputPath>
-        <VersionPrefix>2.0.1</VersionPrefix>
+        <VersionPrefix>2.0.2</VersionPrefix>
     </PropertyGroup>
     <!-- Configurations -->
     <PropertyGroup Condition=" '$(Configuration)' == 'Release_IL2CPP_Mini' ">
