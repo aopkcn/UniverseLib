@@ -14,21 +14,31 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
-        <Configurations>Release_Mono;Release_IL2CPP</Configurations>
+        <Configurations>Release_Mono;Release_IL2CPP;Release_IL2CPP_Mini</Configurations>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageOutputPath>../Release/NuGet</PackageOutputPath>
         <VersionPrefix>2.0.1</VersionPrefix>
     </PropertyGroup>
     <!-- Configurations -->
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release_IL2CPP_Mini' ">
+        <TargetFramework>net6</TargetFramework>
+        <OutputPath>..\Release\UniverseLib.Il2Cpp.Mini\</OutputPath>
+        <DefineConstants>IL2CPP;MINI</DefineConstants>
+        <AssemblyName>UniverseLib.IL2CPP</AssemblyName>
+        <DocumentationFile>..\Release\UniverseLib.Il2Cpp.Mini\UniverseLib.IL2CPP.xml</DocumentationFile>
+        <PackageId>AntDream.UniverseLib.IL2CPP.Interop.Mini</PackageId>
+        <Authors>AntDream</Authors>
+        <Description>一个用于制作面向 IL2CPP 和 Mono Unity 游戏插件的库。Mini只支持 Unity 2017 及以上版本 </Description>
+    </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release_IL2CPP' ">
         <TargetFramework>net6</TargetFramework>
         <OutputPath>..\Release\UniverseLib.Il2Cpp\</OutputPath>
         <DefineConstants>IL2CPP</DefineConstants>
         <AssemblyName>UniverseLib.IL2CPP</AssemblyName>
         <DocumentationFile>..\Release\UniverseLib.Il2Cpp\UniverseLib.IL2CPP.xml</DocumentationFile>
-        <PackageId>kremnev8.UniverseLib.IL2CPP.Interop</PackageId>
-        <Authors>sinai-dev</Authors>
-        <Description>Contains common implementations for creating UI-driven plugins which target IL2CPP and Mono. </Description>
+        <PackageId>AntDream.UniverseLib.IL2CPP.Interop</PackageId>
+        <Authors>AntDream</Authors>
+        <Description>一个用于制作面向 IL2CPP 和 Mono Unity 游戏插件的库。 </Description>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release_Mono' ">
         <TargetFramework>netstandard2.1</TargetFramework>
@@ -36,20 +46,20 @@
         <DefineConstants>MONO</DefineConstants>
         <AssemblyName>UniverseLib.Mono</AssemblyName>
         <DocumentationFile>..\Release\UniverseLib.Mono\UniverseLib.Mono.xml</DocumentationFile>
-        <PackageId>kremnev8.UniverseLib.Mono</PackageId>
-        <Authors>sinai-dev</Authors>
-        <Description>Contains common implementations for creating UI-driven plugins which target IL2CPP and Mono. </Description>
+        <PackageId>AntDream.UniverseLib.Mono</PackageId>
+        <Authors>AntDream</Authors>
+        <Description>一个用于制作面向 IL2CPP 和 Mono Unity 游戏插件的库。 </Description>
     </PropertyGroup>
     <!-- NuGet -->
     <ItemGroup>
-        <PackageReference Include="HarmonyX" Version="2.10.1" IncludeAssets="compile" />
+        <PackageReference Include="HarmonyX" Version="2.15.0" IncludeAssets="compile" />
         <PackageReference Include="UniverseLib.Analyzers" Version="1.0.4" IncludeAssets="compile" />
-        <PackageReference Include="Fody" Version="6.6.4" PrivateAssets="all" />
-        <PackageReference Include="InlineIL.Fody" Version="1.7.4" PrivateAssets="all" />  
+        <PackageReference Include="Fody" Version="6.9.3" PrivateAssets="all" />
+        <PackageReference Include="InlineIL.Fody" Version="1.10.1" PrivateAssets="all" />
     </ItemGroup>
-    <ItemGroup Condition="'$(Configuration)' == 'Release_IL2CPP'">
-        <PackageReference Include="Il2CppInterop.Common" Version="1.4.5" />
-        <PackageReference Include="Il2CppInterop.Runtime" Version="1.4.5" />
+    <ItemGroup Condition="'$(Configuration)' == 'Release_IL2CPP'Or '$(Configuration)' == 'Release_IL2CPP_Mini'">
+        <PackageReference Include="Il2CppInterop.Common" Version="1.5.1" />
+        <PackageReference Include="Il2CppInterop.Runtime" Version="1.5.1" />
     </ItemGroup>
     <!-- Assembly References -->
     <ItemGroup Condition="'$(Configuration)' == 'Release_Mono'">
@@ -66,7 +76,7 @@
             <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine.IMGUIModule">
-            <HintPath>..\lib\mono\UnityEngine.IMGUIModule_publicized.dll</HintPath> 
+            <HintPath>..\lib\mono\UnityEngine.IMGUIModule_publicized.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="UnityEngine.PhysicsModule">
@@ -94,8 +104,8 @@
             <Private>False</Private>
         </Reference>
     </ItemGroup>
-   
-    <ItemGroup Condition="'$(Configuration)' == 'Release_IL2CPP'">
+
+    <ItemGroup Condition="'$(Configuration)' == 'Release_IL2CPP' Or '$(Configuration)' == 'Release_IL2CPP_Mini'">
         <Reference Include="Il2Cppmscorlib">
             <HintPath>..\lib\interop\Il2Cppmscorlib.dll</HintPath>
             <Private>False</Private>
@@ -141,13 +151,23 @@
             <Private>False</Private>
         </Reference>
     </ItemGroup>
-    <ItemGroup>
+
+    <!-- Release_IL2CPP_Mini 只包含 modern -->
+    <ItemGroup Condition="'$(Configuration)' == 'Release_IL2CPP_Mini'">
+        <EmbeddedResource Include="Resources\modern.bundle" />
+    </ItemGroup>
+    <!-- Release 包含所有资源 -->
+    <ItemGroup Condition="'$(Configuration)' == 'Release_IL2CPP' Or '$(Configuration)' == 'Release_Mono'">
         <EmbeddedResource Include="Resources\*" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Patch" />
+        <Folder Include="Patch" />
     </ItemGroup>
     <Target Name="CopyNuget" AfterTargets="build">
+        <Message Text="Copying IL2CPP Interop Mini files..." Importance="high" Condition="'$(Configuration)' == 'Release_IL2CPP_Mini'" />
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(OutputPath)..\NuGet_IL2CPP\lib\net6.0" Condition="'$(Configuration)' == 'Release_IL2CPP_Mini'" />
+        <Copy SourceFiles="$(OutputPath)$(AssemblyName).xml" DestinationFolder="$(OutputPath)..\NuGet_IL2CPP\lib\net6.0" Condition="'$(Configuration)' == 'Release_IL2CPP_Mini'" />
+
         <Message Text="Copying IL2CPP Interop files..." Importance="high" Condition="'$(Configuration)' == 'Release_IL2CPP'" />
         <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(OutputPath)..\NuGet_IL2CPP\lib\net6.0" Condition="'$(Configuration)' == 'Release_IL2CPP'" />
         <Copy SourceFiles="$(OutputPath)$(AssemblyName).xml" DestinationFolder="$(OutputPath)..\NuGet_IL2CPP\lib\net6.0" Condition="'$(Configuration)' == 'Release_IL2CPP'" />

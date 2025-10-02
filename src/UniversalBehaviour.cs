@@ -19,13 +19,22 @@ namespace UniverseLib
         internal static void Setup()
         {
 #if IL2CPP
-            ClassInjector.RegisterTypeInIl2Cpp<UniversalBehaviour>();
+#if MINI
+            try
+            {
+                ClassInjector.RegisterTypeInIl2Cpp<UniversalBehaviour>();
+            }
+            catch (ArgumentException) { }
+#else
+    ClassInjector.RegisterTypeInIl2Cpp<UniversalBehaviour>();
+#endif
 #endif
 
-            GameObject obj = new("UniverseLibBehaviour");
+            // 统一的 GameObject 处理（包含 GetComponent 检查）
+            GameObject obj = GameObject.Find("UniverseLibBehaviour") ?? new GameObject("UniverseLibBehaviour");
             GameObject.DontDestroyOnLoad(obj);
             obj.hideFlags |= HideFlags.HideAndDontSave;
-            Instance = obj.AddComponent<UniversalBehaviour>();
+            Instance = obj.GetComponent<UniversalBehaviour>() ?? obj.AddComponent<UniversalBehaviour>();
         }
 
         internal void Update()

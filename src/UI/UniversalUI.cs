@@ -130,8 +130,8 @@ namespace UniverseLib.UI
             // Prevent click-through
             if (EventSys.IsPointerOverGameObject())
             {
-                if (InputManager.MouseScrollDelta.y != 0 
-                    || InputManager.GetMouseButtonUp(0) 
+                if (InputManager.MouseScrollDelta.y != 0
+                    || InputManager.GetMouseButtonUp(0)
                     || InputManager.GetMouseButtonUp(1))
                 {
                     InputManager.ResetInputAxes();
@@ -182,6 +182,15 @@ namespace UniverseLib.UI
         {
             SetupAssetBundlePatches();
 
+#if MINI
+            // Mini 版本只支持 Unity 2017+，直接加载 modern 包
+            UIBundle = LoadBundle("modern");
+            if (UIBundle == null)
+            {
+                Universe.LogError("Modern bundle not found! Mini version requires Unity 2017+ with modern bundle.");
+            }
+#else
+            // 完整版本保持原有的版本检测逻辑
             try
             {
                 // Get the Major and Minor of the Unity version
@@ -207,11 +216,12 @@ namespace UniverseLib.UI
             catch
             {
                 Universe.LogWarning($"Exception parsing Unity version, falling back to old AssetBundle load method...");
-                UIBundle = LoadBundle("modern") 
+                UIBundle = LoadBundle("modern")
                     ?? LoadBundle("legacy.5.6")
                     ?? LoadBundle("legacy.5.3.4")
                     ?? LoadBundle("legacy");
             }
+#endif
 
             if (UIBundle == null)
             {
@@ -268,9 +278,9 @@ namespace UniverseLib.UI
         static void SetupAssetBundlePatches()
         {
             Universe.Patch(
-                ReflectionUtility.GetTypeByName("UnityEngine.AssetBundle"), 
-                "UnloadAllAssetBundles", 
-                MethodType.Normal, 
+                ReflectionUtility.GetTypeByName("UnityEngine.AssetBundle"),
+                "UnloadAllAssetBundles",
+                MethodType.Normal,
                 prefix: AccessTools.Method(typeof(UniversalUI), nameof(Prefix_UnloadAllAssetBundles)));
         }
 
