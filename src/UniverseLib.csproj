@@ -24,8 +24,8 @@
         <TargetFramework>net6</TargetFramework>
         <OutputPath>..\Release\UniverseLib.Il2Cpp.Mini\</OutputPath>
         <DefineConstants>IL2CPP;MINI</DefineConstants>
-        <AssemblyName>UniverseLib.IL2CPP</AssemblyName>
-        <DocumentationFile>..\Release\UniverseLib.Il2Cpp.Mini\UniverseLib.IL2CPP.xml</DocumentationFile>
+        <AssemblyName>UniverseLib</AssemblyName>
+        <DocumentationFile>..\Release\UniverseLib.Il2Cpp.Mini\UniverseLib.xml</DocumentationFile>
         <PackageId>AntDream.UniverseLib.IL2CPP.Interop.Mini</PackageId>
         <Authors>AntDream</Authors>
         <Description>一个用于制作面向 IL2CPP 和 Mono Unity 游戏插件的库。Mini只支持 Unity 2017 及以上版本 </Description>
@@ -34,8 +34,8 @@
         <TargetFramework>net6</TargetFramework>
         <OutputPath>..\Release\UniverseLib.Il2Cpp\</OutputPath>
         <DefineConstants>IL2CPP</DefineConstants>
-        <AssemblyName>UniverseLib.IL2CPP</AssemblyName>
-        <DocumentationFile>..\Release\UniverseLib.Il2Cpp\UniverseLib.IL2CPP.xml</DocumentationFile>
+        <AssemblyName>UniverseLib</AssemblyName>
+        <DocumentationFile>..\Release\UniverseLib.Il2Cpp\UniverseLib.xml</DocumentationFile>
         <PackageId>AntDream.UniverseLib.IL2CPP.Interop</PackageId>
         <Authors>AntDream</Authors>
         <Description>一个用于制作面向 IL2CPP 和 Mono Unity 游戏插件的库。 </Description>
@@ -44,8 +44,8 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <OutputPath>..\Release\UniverseLib.Mono\</OutputPath>
         <DefineConstants>MONO</DefineConstants>
-        <AssemblyName>UniverseLib.Mono</AssemblyName>
-        <DocumentationFile>..\Release\UniverseLib.Mono\UniverseLib.Mono.xml</DocumentationFile>
+        <AssemblyName>UniverseLib</AssemblyName>
+        <DocumentationFile>..\Release\UniverseLib.Mono\UniverseLib.xml</DocumentationFile>
         <PackageId>AntDream.UniverseLib.Mono</PackageId>
         <Authors>AntDream</Authors>
         <Description>一个用于制作面向 IL2CPP 和 Mono Unity 游戏插件的库。 </Description>
