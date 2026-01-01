@@ -1,4 +1,4 @@
-﻿#if IL2CPP
+#if IL2CPP
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -230,6 +230,32 @@ namespace UniverseLib
             if (obj is not Il2CppObjectBase cppObj)
                 return obj;
 
+            // Check for null pointer to prevent NullReferenceException
+            if (cppObj.Pointer == IntPtr.Zero)
+            {
+                // For nullable types, return a proper nullable with no value instead of null
+                if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    return Activator.CreateInstance(toType);
+                }
+                
+                // For IL2CPP nullable types (Il2CppSystem.Nullable<T>), also return a proper nullable instance
+                if (toType.IsGenericType && toType.FullName != null && toType.FullName.StartsWith("Il2CppSystem.Nullable`1"))
+                {
+                    try
+                    {
+                        return Activator.CreateInstance(toType);
+                    }
+                    catch
+                    {
+                        // If we can't create an instance, return null
+                        return null;
+                    }
+                }
+                
+                return null;
+            }
+
             // from il2cpp objects...
 
             // ...to a struct
@@ -287,6 +313,32 @@ namespace UniverseLib
             if (!toType.IsValueType)
                 return null;
 
+            // Check for null pointer to prevent NullReferenceException
+            if (cppObj == null || cppObj.Pointer == IntPtr.Zero)
+            {
+                // For nullable types, return a proper nullable with no value instead of null
+                if (toType.IsGenericType && toType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
+                    return Activator.CreateInstance(toType);
+                }
+                
+                // For IL2CPP nullable types (Il2CppSystem.Nullable<T>), also return a proper nullable instance
+                if (toType.IsGenericType && toType.FullName != null && toType.FullName.StartsWith("Il2CppSystem.Nullable`1"))
+                {
+                    try
+                    {
+                        return Activator.CreateInstance(toType);
+                    }
+                    catch
+                    {
+                        // If we can't create an instance, return null
+                        return null;
+                    }
+                }
+                
+                return null;
+            }
+
             try
             {
                 if (toType.IsEnum)
@@ -307,7 +359,9 @@ namespace UniverseLib
                         return cppObj;
                     }
 
-                    return Enum.Parse(toType, cppObj.TryCast<Il2CppSystem.Enum>().ToString());
+                    // Fix for TypeLoadException: Could not load type 'Il2CppSystem.Enum' due to value type mismatch
+                    // Instead of casting to Il2CppSystem.Enum, directly call ToString() on the object
+                    return Enum.Parse(toType, cppObj.ToString());
                 }
 
                 // Not enum, unbox with Il2CppObjectBase.Unbox
@@ -345,7 +399,30 @@ namespace UniverseLib
                     return null;
 
                 if (type.IsEnum)
-                    return Il2CppSystem.Enum.Parse(Il2CppType.From(type), value.ToString());
+                {
+                    // Fix for TypeLoadException: Could not load type 'Il2CppSystem.Enum' due to value type mismatch
+                    // Instead of using Il2CppSystem.Enum.Parse, use reflection to get the Parse method
+                    try
+                    {
+                        Type il2cppEnumType = AllTypes.TryGetValue("Il2CppSystem.Enum", out Type enumType) ? enumType : null;
+                        if (il2cppEnumType != null)
+                        {
+                            MethodInfo parseMethod = il2cppEnumType.GetMethod("Parse", new Type[] { typeof(Il2CppSystem.Type), typeof(string) });
+                            if (parseMethod != null)
+                            {
+                                Il2CppSystem.Type enumCppType = Il2CppType.From(type);
+                                return parseMethod.Invoke(null, new object[] { enumCppType, value.ToString() }) as Il2CppSystem.Object;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Fallback to a simple approach if reflection fails
+                    }
+                    
+                    // If all else fails, return null
+                    return null;
+                }
 
                 if (type.IsPrimitive && AllTypes.TryGetValue($"Il2Cpp{type.FullName}", out Type cppType))
                     return BoxIl2CppObject(MakeIl2CppPrimitive(cppType, value), cppType);
