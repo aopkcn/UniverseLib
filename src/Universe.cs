@@ -28,7 +28,7 @@ namespace UniverseLib
         }
 
         public const string NAME = "UniverseLib";
-        public const string VERSION = "2.0.2";
+        public const string VERSION = "2.0.3";
         public const string AUTHOR = "rainbowblood666";
         public const string GUID = "rainbowblood.universelib";
 
